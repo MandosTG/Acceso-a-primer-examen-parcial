@@ -165,14 +165,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
-        .desktop-only {
-            display: block;
-        }
-
-        .mobile-only {
-            display: none;
-        }
-
         .fatty-acid:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -339,10 +331,10 @@
 
         <div class="instructions">
             <h3>📋 Instrucciones:</h3>
-            <p>Arrastra cada ácido graso al pez correcto:</p>
+            <p>Haz clic en el botón del pez correcto para cada ácido graso:</p>
             <ul>
-                <li><strong>Ácidos grasos SATURADOS</strong> → Pez de agua templada</li>
-                <li><strong>Ácidos grasos INSATURADOS</strong> → Pez de agua fría</li>
+                <li><strong>Ácidos grasos SATURADOS</strong> → 🐟 Agua Templada (botón naranja)</li>
+                <li><strong>Ácidos grasos INSATURADOS</strong> → 🐟 Agua Fría (botón verde)</li>
             </ul>
             <p>⚠️ <strong>Debes clasificar correctamente TODOS los ácidos grasos para acceder al examen parcial.</strong></p>
         </div>
@@ -363,8 +355,7 @@
                         <circle cx="75" cy="35" r="3" fill="#fff"/>
                         <circle cx="75" cy="35" r="1.5" fill="#000"/>
                     </svg>
-                    <p class="desktop-only"><strong>Arrastra aquí los ácidos grasos correspondientes</strong></p>
-                    <p class="mobile-only"><strong>Ácidos grasos INSATURADOS</strong></p>
+                    <p><strong>Ácidos grasos INSATURADOS</strong></p>
                     <div class="dropped-acids" id="cold-dropped"></div>
                 </div>
 
@@ -378,8 +369,7 @@
                         <circle cx="75" cy="35" r="3" fill="#fff"/>
                         <circle cx="75" cy="35" r="1.5" fill="#000"/>
                     </svg>
-                    <p class="desktop-only"><strong>Arrastra aquí los ácidos grasos correspondientes</strong></p>
-                    <p class="mobile-only"><strong>Ácidos grasos SATURADOS</strong></p>
+                    <p><strong>Ácidos grasos SATURADOS</strong></p>
                     <div class="dropped-acids" id="warm-dropped"></div>
                 </div>
             </div>
@@ -397,71 +387,127 @@
                 <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Oleico">
                     <h4>Ácido Oleico (C18:1)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Esteárico">
                     <h4>Ácido Esteárico (C18:0)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Linoleico">
                     <h4>Ácido Linoleico (C18:2)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Láurico">
                     <h4>Ácido Láurico (C12:0)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido α-Linolénico">
                     <h4>Ácido α-Linolénico (C18:3)</h4>
                     <div class="structure">CH₃-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Mirístico">
                     <h4>Ácido Mirístico (C14:0)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Araquidónico">
                     <h4>Ácido Araquidónico (C20:4)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Caprílico">
                     <h4>Ácido Caprílico (C8:0)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Palmitoleico">
                     <h4>Ácido Palmitoleico (C16:1)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Araquídico">
                     <h4>Ácido Araquídico (C20:0)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Eicosapentaenoico">
                     <h4>Ácido Eicosapentaenoico (C20:5)</h4>
                     <div class="structure">CH₃-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Cáprico">
                     <h4>Ácido Cáprico (C10:0)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Docosahexaenoico">
                     <h4>Ácido Docosahexaenoico (C22:6)</h4>
                     <div class="structure">CH₃-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
 
                 <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Behénico">
                     <h4>Ácido Behénico (C22:0)</h4>
                     <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -637,5 +683,5 @@
             checkCompletion();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b2f44765875cc2',t:'MTc1OTg5ODM2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b306b516da5cc2',t:'MTc1OTg5OTExOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
