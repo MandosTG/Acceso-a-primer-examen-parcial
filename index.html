@@ -264,6 +264,28 @@
             margin: 20px 0;
             font-size: 1.1rem;
             color: #666;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
         }
 
         @media (max-width: 768px) {
@@ -341,6 +363,7 @@
 
         <div class="progress">
             <span id="progress-text">Progreso: 0/15 ácidos grasos clasificados</span>
+            <button id="reset-button" class="reset-btn" onclick="resetGame()">🔄 Reiniciar Juego</button>
         </div>
 
         <div class="game-area">
@@ -656,32 +679,204 @@
             const isCorrect = (acidType === 'saturated' && targetZone === 'warm-fish') ||
                              (acidType === 'unsaturated' && targetZone === 'cold-fish');
 
-            if (isCorrect) {
-                // Colocación correcta
-                const droppedContainer = document.getElementById(targetZone).querySelector('.dropped-acids');
-                const droppedAcid = document.createElement('div');
-                droppedAcid.className = 'dropped-acid';
-                droppedAcid.textContent = acidName;
-                droppedContainer.appendChild(droppedAcid);
+            // Siempre permitir la colocación, sin importar si es correcta o no
+            const droppedContainer = document.getElementById(targetZone).querySelector('.dropped-acids');
+            const droppedAcid = document.createElement('div');
+            droppedAcid.className = 'dropped-acid';
+            droppedAcid.textContent = acidName;
+            droppedContainer.appendChild(droppedAcid);
 
-                // Remover el ácido graso original
-                fattyAcidElement.remove();
-                
-                // Actualizar contador
-                if (!placedAcids.has(acidName)) {
-                    placedAcids.add(acidName);
+            // Remover el ácido graso original
+            fattyAcidElement.remove();
+            
+            // Solo contar como correcto si realmente es correcto
+            if (!placedAcids.has(acidName)) {
+                placedAcids.add(acidName);
+                if (isCorrect) {
                     correctPlacements++;
+                    showStatus('¡Correcto! ' + acidName + ' clasificado correctamente.', 'success');
+                } else {
+                    showStatus('❌ Incorrecto. ' + acidName + ' no pertenece a este tipo de pez.', 'error');
                 }
-
-                showStatus('¡Correcto! ' + acidName + ' clasificado correctamente.', 'success');
-            } else {
-                // Colocación incorrecta
-                showStatus('❌ Incorrecto. ' + acidName + ' no pertenece a este tipo de pez.', 'error');
             }
 
             updateProgress();
             checkCompletion();
         }
+
+        // Función para reiniciar el juego
+        function resetGame() {
+            // Limpiar las zonas de peces
+            document.getElementById('cold-dropped').innerHTML = '';
+            document.getElementById('warm-dropped').innerHTML = '';
+            
+            // Reiniciar contadores
+            correctPlacements = 0;
+            placedAcids.clear();
+            
+            // Ocultar mensaje de estado
+            document.getElementById('status').style.display = 'none';
+            
+            // Restaurar el botón del examen
+            const examButton = document.getElementById('exam-button');
+            const examMessage = document.getElementById('exam-message');
+            examButton.classList.add('disabled');
+            examButton.textContent = '🔒 Acceso al Examen Parcial 1';
+            examButton.href = '#';
+            examMessage.textContent = 'Completa la clasificación correctamente para desbloquear el examen';
+            examMessage.style.color = '#666';
+            
+            // Recrear todos los ácidos grasos
+            const fattyAcidsContainer = document.getElementById('fatty-acids');
+            fattyAcidsContainer.innerHTML = `
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Palmítico">
+                    <h4>Ácido Palmítico (C16:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Oleico">
+                    <h4>Ácido Oleico (C18:1)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Esteárico">
+                    <h4>Ácido Esteárico (C18:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Linoleico">
+                    <h4>Ácido Linoleico (C18:2)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Láurico">
+                    <h4>Ácido Láurico (C12:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido α-Linolénico">
+                    <h4>Ácido α-Linolénico (C18:3)</h4>
+                    <div class="structure">CH₃-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Mirístico">
+                    <h4>Ácido Mirístico (C14:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Araquidónico">
+                    <h4>Ácido Araquidónico (C20:4)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Caprílico">
+                    <h4>Ácido Caprílico (C8:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Palmitoleico">
+                    <h4>Ácido Palmitoleico (C16:1)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Araquídico">
+                    <h4>Ácido Araquídico (C20:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Eicosapentaenoico">
+                    <h4>Ácido Eicosapentaenoico (C20:5)</h4>
+                    <div class="structure">CH₃-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Cáprico">
+                    <h4>Ácido Cáprico (C10:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Docosahexaenoico">
+                    <h4>Ácido Docosahexaenoico (C22:6)</h4>
+                    <div class="structure">CH₃-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Behénico">
+                    <h4>Ácido Behénico (C22:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                    <div class="mobile-buttons">
+                        <button class="mobile-btn cold-btn" onclick="classifyAcid(this, 'cold-fish')">🐟 Agua Fría</button>
+                        <button class="mobile-btn warm-btn" onclick="classifyAcid(this, 'warm-fish')">🐟 Agua Templada</button>
+                    </div>
+                </div>
+            `;
+            
+            // Reconfigurar eventos de arrastre para los nuevos elementos
+            const fattyAcids = document.querySelectorAll('.fatty-acid');
+            fattyAcids.forEach(acid => {
+                acid.addEventListener('dragstart', handleDragStart);
+                acid.addEventListener('dragend', handleDragEnd);
+            });
+            
+            // Actualizar progreso
+            updateProgress();
+            
+            showStatus('🔄 Juego reiniciado. ¡Puedes empezar de nuevo!', 'success');
+        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b306b516da5cc2',t:'MTc1OTg5OTExOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b65989f70469fb',t:'MTc1OTkzMzk2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
