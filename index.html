@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificación de Ácidos Grasos - Examen de Nutrición</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            min-height: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #1565c0;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #2196f3;
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            min-height: 400px;
+        }
+
+        .fish-zone {
+            background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 3px dashed #81c784;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .fish-zone.cold {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            border-color: #4caf50;
+        }
+
+        .fish-zone.warm {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffcc02 100%);
+            border-color: #ff9800;
+        }
+
+        .fish-zone.drag-over {
+            border-color: #2196f3;
+            background: rgba(33, 150, 243, 0.1);
+            transform: scale(1.02);
+        }
+
+        .fish-zone h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .fish-zone.cold h3 {
+            color: #2e7d32;
+        }
+
+        .fish-zone.warm h3 {
+            color: #ef6c00;
+        }
+
+        .fish {
+            width: 120px;
+            height: 80px;
+            margin: 0 auto 20px;
+        }
+
+        .fatty-acids-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .fatty-acid {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            user-select: none;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .fatty-acid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .fatty-acid.dragging {
+            opacity: 0.7;
+            transform: rotate(5deg);
+            cursor: grabbing;
+        }
+
+        .fatty-acid h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .structure {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .double-bond {
+            color: #e91e63;
+            font-weight: bold;
+        }
+
+        .dropped-acids {
+            margin-top: 15px;
+            min-height: 100px;
+        }
+
+        .dropped-acid {
+            background: rgba(255,255,255,0.9);
+            margin: 5px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border: 1px solid #ccc;
+        }
+
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .status.error {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .exam-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .exam-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .exam-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .exam-button.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .exam-button.disabled:hover {
+            transform: none;
+        }
+
+        .progress {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐟 Clasificación de Ácidos Grasos 🐟</h1>
+            <p>Examen Preparatorio - Nutrición</p>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Instrucciones:</h3>
+            <p>Arrastra cada ácido graso al pez correcto:</p>
+            <ul>
+                <li><strong>Ácidos grasos SATURADOS</strong> → Pez de agua templada</li>
+                <li><strong>Ácidos grasos INSATURADOS</strong> → Pez de agua fría</li>
+            </ul>
+            <p>⚠️ <strong>Debes clasificar correctamente TODOS los ácidos grasos para acceder al examen parcial.</strong></p>
+        </div>
+
+        <div class="progress">
+            <span id="progress-text">Progreso: 0/15 ácidos grasos clasificados</span>
+        </div>
+
+        <div class="game-area">
+            <div class="fish-zone cold" id="cold-fish">
+                <h3>🐟 Pez de Agua Fría</h3>
+                <svg class="fish" viewBox="0 0 120 80">
+                    <ellipse cx="60" cy="40" rx="35" ry="20" fill="#4fc3f7" stroke="#0277bd" stroke-width="2"/>
+                    <polygon points="25,40 5,25 5,55" fill="#29b6f6" stroke="#0277bd" stroke-width="2"/>
+                    <polygon points="60,20 70,5 80,20" fill="#29b6f6" stroke="#0277bd" stroke-width="2"/>
+                    <polygon points="60,60 70,75 80,60" fill="#29b6f6" stroke="#0277bd" stroke-width="2"/>
+                    <circle cx="75" cy="35" r="3" fill="#fff"/>
+                    <circle cx="75" cy="35" r="1.5" fill="#000"/>
+                </svg>
+                <p><strong>Arrastra aquí los ácidos grasos correspondientes</strong></p>
+                <div class="dropped-acids" id="cold-dropped"></div>
+            </div>
+
+            <div class="fatty-acids-container" id="fatty-acids">
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Palmítico">
+                    <h4>Ácido Palmítico (C16:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Oleico">
+                    <h4>Ácido Oleico (C18:1)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Esteárico">
+                    <h4>Ácido Esteárico (C18:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Linoleico">
+                    <h4>Ácido Linoleico (C18:2)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Láurico">
+                    <h4>Ácido Láurico (C12:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido α-Linolénico">
+                    <h4>Ácido α-Linolénico (C18:3)</h4>
+                    <div class="structure">CH₃-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Mirístico">
+                    <h4>Ácido Mirístico (C14:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Araquidónico">
+                    <h4>Ácido Araquidónico (C20:4)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Caprílico">
+                    <h4>Ácido Caprílico (C8:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Palmitoleico">
+                    <h4>Ácido Palmitoleico (C16:1)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Araquídico">
+                    <h4>Ácido Araquídico (C20:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Eicosapentaenoico">
+                    <h4>Ácido Eicosapentaenoico (C20:5)</h4>
+                    <div class="structure">CH₃-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Cáprico">
+                    <h4>Ácido Cáprico (C10:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="unsaturated" data-name="Ácido Docosahexaenoico">
+                    <h4>Ácido Docosahexaenoico (C22:6)</h4>
+                    <div class="structure">CH₃-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-<span class="double-bond">CH=CH</span>-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+
+                <div class="fatty-acid" draggable="true" data-type="saturated" data-name="Ácido Behénico">
+                    <h4>Ácido Behénico (C22:0)</h4>
+                    <div class="structure">CH₃-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-CH₂-COOH</div>
+                </div>
+            </div>
+
+            <div class="fish-zone warm" id="warm-fish">
+                <h3>🐟 Pez de Agua Templada</h3>
+                <svg class="fish" viewBox="0 0 120 80">
+                    <ellipse cx="60" cy="40" rx="35" ry="20" fill="#ffb74d" stroke="#f57c00" stroke-width="2"/>
+                    <polygon points="25,40 5,25 5,55" fill="#ffa726" stroke="#f57c00" stroke-width="2"/>
+                    <polygon points="60,20 70,5 80,20" fill="#ffa726" stroke="#f57c00" stroke-width="2"/>
+                    <polygon points="60,60 70,75 80,60" fill="#ffa726" stroke="#f57c00" stroke-width="2"/>
+                    <circle cx="75" cy="35" r="3" fill="#fff"/>
+                    <circle cx="75" cy="35" r="1.5" fill="#000"/>
+                </svg>
+                <p><strong>Arrastra aquí los ácidos grasos correspondientes</strong></p>
+                <div class="dropped-acids" id="warm-dropped"></div>
+            </div>
+        </div>
+
+        <div id="status" class="status" style="display: none;"></div>
+
+        <div class="exam-link">
+            <a href="#" id="exam-button" class="exam-button disabled" target="_blank" rel="noopener noreferrer">
+                🔒 Acceso al Examen Parcial 1
+            </a>
+            <p id="exam-message" style="margin-top: 10px; color: #666;">
+                Completa la clasificación correctamente para desbloquear el examen
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let draggedElement = null;
+        let correctPlacements = 0;
+        let totalAcids = 15;
+        let placedAcids = new Set();
+
+        // Configurar eventos de arrastre
+        document.addEventListener('DOMContentLoaded', function() {
+            const fattyAcids = document.querySelectorAll('.fatty-acid');
+            const fishZones = document.querySelectorAll('.fish-zone');
+
+            fattyAcids.forEach(acid => {
+                acid.addEventListener('dragstart', handleDragStart);
+                acid.addEventListener('dragend', handleDragEnd);
+            });
+
+            fishZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragenter', handleDragEnter);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+
+            updateProgress();
+        });
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+
+            if (!draggedElement) return;
+
+            const acidType = draggedElement.dataset.type;
+            const acidName = draggedElement.dataset.name;
+            const zoneId = e.currentTarget.id;
+
+            // Verificar si la colocación es correcta
+            const isCorrect = (acidType === 'saturated' && zoneId === 'warm-fish') ||
+                             (acidType === 'unsaturated' && zoneId === 'cold-fish');
+
+            if (isCorrect) {
+                // Colocación correcta
+                const droppedContainer = e.currentTarget.querySelector('.dropped-acids');
+                const droppedAcid = document.createElement('div');
+                droppedAcid.className = 'dropped-acid';
+                droppedAcid.textContent = acidName;
+                droppedContainer.appendChild(droppedAcid);
+
+                // Remover el ácido graso original
+                draggedElement.remove();
+                
+                // Actualizar contador
+                if (!placedAcids.has(acidName)) {
+                    placedAcids.add(acidName);
+                    correctPlacements++;
+                }
+
+                showStatus('¡Correcto! ' + acidName + ' clasificado correctamente.', 'success');
+            } else {
+                // Colocación incorrecta
+                showStatus('❌ Incorrecto. ' + acidName + ' no pertenece a este tipo de pez.', 'error');
+            }
+
+            updateProgress();
+            checkCompletion();
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateProgress() {
+            const progressText = document.getElementById('progress-text');
+            progressText.textContent = `Progreso: ${correctPlacements}/${totalAcids} ácidos grasos clasificados`;
+        }
+
+        function checkCompletion() {
+            if (correctPlacements === totalAcids) {
+                const examButton = document.getElementById('exam-button');
+                const examMessage = document.getElementById('exam-message');
+                
+                examButton.classList.remove('disabled');
+                examButton.textContent = '🎉 ¡Acceder al Examen Parcial 1!';
+                examButton.href = 'https://forms.gle/EGHNNXX4SN5CYfkw8';
+                
+                examMessage.textContent = '¡Excelente! Has clasificado correctamente todos los ácidos grasos.';
+                examMessage.style.color = '#2e7d32';
+                
+                showStatus('🎉 ¡Felicitaciones! Has completado la clasificación correctamente. Ya puedes acceder al examen parcial.', 'success');
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b2ddbc652b5cc2',t:'MTc1OTg5NzQ0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
